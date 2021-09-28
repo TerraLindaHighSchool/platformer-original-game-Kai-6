@@ -10,22 +10,26 @@ public class Level1 extends World
 {
     private final float GRAVITY = 0.0667f;
     private final GreenfootSound MUSIC = new GreenfootSound("zapsplat_024.mp3");
+    private GreenfootImage background = new GreenfootImage(1200, 800);
+    private int scrollCount;
     public Level1()
     {    
         // Create a new world with 1200x800 cells with a cell size of 1x1 pixels.
         super(1200, 800, 1, false); 
         prepare();
     }
-
-    /**
-     * Prepare the world for the start of the program.
-     * That is: create the initial objects and add them to the world.
-     */
+    
+    public void act()
+    {
+        spawn();
+        scroll();
+    }
+    
     private void prepare()
     {
         setPaintOrder(Player.class, Platform.class, Obstacle.class, Collectable.class,
-            Door.class, HUD.class);
-            Player player = new Player(3, 5.6f, GRAVITY, 3, 3, Level2.class, MUSIC);
+        Door.class, HUD.class);
+        Player player = new Player(3, 5.6f, GRAVITY, 3, 3, Level2.class, MUSIC);
         addObject(player,25,755);
         addObject(new Door(),1175,45);
         addObject(new Floor(), 600, 800);
@@ -40,10 +44,6 @@ public class Level1 extends World
         addObject(new SmBrickWall(),580,624);
         addObject(new SmBrickWall(),380,702);
         addObject(new SmBrickWall(),228,344);
-        addObject(new AcidRain(GRAVITY),886,584);
-        addObject(new AcidRain(GRAVITY),728,584);
-        addObject(new AcidRain(GRAVITY),923,172);
-        addObject(new AcidRain(GRAVITY),37,12);
         addObject(new Bomb(GRAVITY),606,148);
         addObject(new Bomb(GRAVITY),398,148);
         addObject(new Bomb(GRAVITY),1052,764);
@@ -53,5 +53,25 @@ public class Level1 extends World
         addObject(new Gem(),1140,362);
         addObject(new Gem(),1138,655);
         addObject(new Gem(),810,768);
+    }
+    
+    private void spawn()
+    {
+        if(Math.random() < 0.0025)
+        {
+            addObject(new Rock(GRAVITY), Greenfoot.getRandomNumber(1200), -30);
+        }
+        if(Math.random() < 0.0001)
+        {
+            addObject(new AcidRain(GRAVITY), Greenfoot.getRandomNumber(1200), -30);
+        }
+    }
+    
+    private void scroll()
+    {
+        background.clear();
+        background.setTransparency(255);
+        background.drawImage(, 200 + scrollCount, 400);
+        scrollCount += 1;
     }
 }

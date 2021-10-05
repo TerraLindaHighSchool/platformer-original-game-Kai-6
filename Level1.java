@@ -10,12 +10,18 @@ public class Level1 extends World
 {
     private final float GRAVITY = 0.0667f;
     private final GreenfootSound MUSIC = new GreenfootSound("zapsplat_024.mp3");
-    private GreenfootImage background = new GreenfootImage(1200, 800);
-    private int scrollCount;
+    private static final String bgImageFile= "skyBox.png";
+    private static final float scrollSpeed = 0.45f;
+    private static final int bgWidth = (new GreenfootImage(bgImageFile)).getWidth();
+    private GreenfootImage bgImage, bgBase;
+    private float scrollPos = 0;
     public Level1()
     {    
         // Create a new world with 1200x800 cells with a cell size of 1x1 pixels.
-        super(1200, 800, 1, false); 
+        super(1200, 800, 1, false);
+        bgImage = new GreenfootImage(getBackground());
+        bgBase = new GreenfootImage(bgWidth, getHeight());
+        bgBase.drawImage(bgImage, 0, 0);
         prepare();
     }
     
@@ -69,9 +75,17 @@ public class Level1 extends World
     
     private void scroll()
     {
-        background.clear();
-        background.setTransparency(255);
-        background.drawImage(, 200 + scrollCount, 400);
-        scrollCount += 1;
+        scrollPos -= scrollSpeed;
+        while(scrollSpeed > 0 && scrollPos < -bgWidth) 
+        {
+          scrollPos += bgWidth;  
+        }
+        while(scrollSpeed < 0 && scrollPos > 0) 
+        {
+          scrollPos -= bgWidth;  
+        }
+        GreenfootImage bg = getBackground();
+        bg.drawImage(bgBase, Math.round(scrollPos), 0);
+        bg.drawImage(bgImage, Math.round(scrollPos) + bgWidth, 0);
     }
 }

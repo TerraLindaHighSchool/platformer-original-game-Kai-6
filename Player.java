@@ -34,7 +34,7 @@ public class Player extends Actor
         GRAVITY = gravity;
         NEXT_LEVEL = nextLevel;
         MUSIC = music;
-        
+
         STANDING_IMAGE = getImage();
         WALK_ANIMATION = new GreenfootImage[]
         { 
@@ -45,7 +45,7 @@ public class Player extends Actor
             new GreenfootImage("walk4.png"),
             new GreenfootImage("walk5.png")
         };
-        
+
     }
 
     public void act() {
@@ -54,8 +54,10 @@ public class Player extends Actor
         fall();
         onCollision();
         gameOver();
-}
+    }
+
     public void addedToWorld(World world) {}
+
     private void walk() 
     {
         if(isWalking)
@@ -67,7 +69,7 @@ public class Player extends Actor
             setImage(STANDING_IMAGE);
             walkIndex = 0;
         }
-        
+
         if(Greenfoot.isKeyDown("right"))
         {
             if(isFacingLeft)
@@ -78,7 +80,7 @@ public class Player extends Actor
             isFacingLeft = false;
             move(speed);
         }
-        
+
         if(Greenfoot.isKeyDown("left"))
         {
             if(!isFacingLeft)
@@ -94,6 +96,7 @@ public class Player extends Actor
             isWalking = false;
         }
     }
+
     private void jump() 
     {
         if (Greenfoot.isKeyDown("space") && isOnGround())
@@ -111,6 +114,7 @@ public class Player extends Actor
             isJumping = false;
         }
     }
+
     private void fall() 
     {
         if (!isJumping && !isOnGround())
@@ -119,6 +123,7 @@ public class Player extends Actor
             yVelocity += GRAVITY;
         }
     }
+
     private void animator()
     {
         if(frame % (15 - 2 * speed) == 0)
@@ -135,7 +140,9 @@ public class Player extends Actor
         }
         frame++;
     }
+
     private void onCollision() {}
+
     private void mirrorImages() 
     {
         for(int i = 0; i < WALK_ANIMATION.length; i++)
@@ -143,7 +150,9 @@ public class Player extends Actor
             WALK_ANIMATION[i].mirrorHorizontally();
         }
     }
+
     private void gameOver() {}
+
     private boolean isOnGround() 
     {
         Actor ground = getOneObjectAtOffset(0, getImage().getHeight() /

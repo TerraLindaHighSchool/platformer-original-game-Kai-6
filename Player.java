@@ -91,7 +91,7 @@ public class Player extends Actor
             isFacingLeft = true;
             move(-speed);
         }
-        if (!(Greenfoot.isKeyDown("right") || Greenfoot.isKeyDown("left")))
+        if(!(Greenfoot.isKeyDown("right") || Greenfoot.isKeyDown("left")))
         {
             isWalking = false;
         }
@@ -99,12 +99,12 @@ public class Player extends Actor
 
     private void jump() 
     {
-        if (Greenfoot.isKeyDown("space") && isOnGround())
+        if(Greenfoot.isKeyDown("space") && isOnGround())
         {
             yVelocity = -JUMP_FORCE;
             isJumping = true;
         }
-        if (isJumping && yVelocity < 0)
+        if(isJumping && yVelocity < 0)
         {
             setLocation(getX(), getY() + (int) yVelocity);
             yVelocity += GRAVITY;
@@ -117,7 +117,7 @@ public class Player extends Actor
 
     private void fall() 
     {
-        if (!isJumping && !isOnGround())
+        if(!isJumping && !isOnGround())
         {
             setLocation(getX(), getY() + (int) yVelocity);
             yVelocity += GRAVITY;
@@ -141,7 +141,33 @@ public class Player extends Actor
         frame++;
     }
 
-    private void onCollision() {}
+    private void onCollision() 
+    {
+        if(isTouching(Door.class))
+        {
+            World world = null;
+            try 
+            {
+                world = (World) NEXT_LEVEL.newInstance();
+            }   
+            catch (InstantiationException e) 
+            {
+                System.out.println("Class cannot be instantiated");
+            } catch (IllegalAccessException e) {
+                System.out.println("Cannot access class constructor");
+            } 
+            Greenfoot.setWorld(world);
+        }
+        if(isTouching(Obstacle.class))
+        {
+            removeTouching(Obstacle.class);
+        }
+        if(isTouching(Platform.class) && !isOnGround)
+        {
+            yVelocity = 1;
+            fall();
+        }
+    }
 
     private void mirrorImages() 
     {

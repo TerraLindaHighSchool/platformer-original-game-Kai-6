@@ -13,6 +13,7 @@ public class Player extends Actor
     private int healthCount;
     private int speed;
     private int walkIndex;
+    private int standIndex;
     private int frame;
     private float yVelocity;
     private boolean isWalking;
@@ -34,7 +35,8 @@ public class Player extends Actor
         GRAVITY = gravity;
         NEXT_LEVEL = nextLevel;
         MUSIC = music;
-
+        health = new Health[maxHealth];
+        healthCount = maxHealth;
         STANDING_IMAGE = getImage();
         WALK_ANIMATION = new GreenfootImage[]
         { 
@@ -56,7 +58,14 @@ public class Player extends Actor
         gameOver();
     }
 
-    public void addedToWorld(World world) {}
+    public void addedToWorld(World world) 
+    {
+        for(int i = 0; i < health.length; i++)
+        {
+            health[i] = new Health();
+            world.addObject(health[i], 30 + 42 * i, 36);
+        }
+    }
 
     private void walk() 
     {
@@ -69,27 +78,38 @@ public class Player extends Actor
             setImage(STANDING_IMAGE);
             walkIndex = 0;
         }
-
         if(Greenfoot.isKeyDown("right"))
         {
             if(isFacingLeft)
             {
-                mirrorImages();
+                mirrorImages(WALK_ANIMATION);
             }
             isWalking = true;
             isFacingLeft = false;
-            move(speed);
+            if(!(getX() + speed > getWorld().getWidth()))
+            {
+                move(speed);
+            } else {
+                setLocation(getWorld().getWidth(), getY());
+            }
         }
 
         if(Greenfoot.isKeyDown("left"))
         {
             if(!isFacingLeft)
             {
-                mirrorImages();
+                mirrorImages(WALK_ANIMATION);
             }
             isWalking = true;
             isFacingLeft = true;
-            move(-speed);
+            if(!(getX() - speed < 0))
+            {
+                move(-speed);
+            }
+            else
+            {
+                setLocation(0, getY());
+            }
         }
         if(!(Greenfoot.isKeyDown("right") || Greenfoot.isKeyDown("left")))
         {
@@ -101,13 +121,13 @@ public class Player extends Actor
     {
         if(Greenfoot.isKeyDown("space") && isOnGround())
         {
-            yVelocity = -JUMP_FORCE;
+            yVelocity = JUMP_FORCE;
             isJumping = true;
         }
-        if(isJumping && yVelocity < 0)
+        if(isJumping && yVelocity > 0)
         {
-            setLocation(getX(), getY() + (int) yVelocity);
-            yVelocity += GRAVITY;
+            setLocation(getX(), getY() - (int) yVelocity);
+            yVelocity -= GRAVITY;
         }
         else 
         {
@@ -119,8 +139,8 @@ public class Player extends Actor
     {
         if(!isJumping && !isOnGround())
         {
-            setLocation(getX(), getY() + (int) yVelocity);
-            yVelocity += GRAVITY;
+            setLocation(getX(), getY() - (int) yVelocity);
+            yVelocity -= GRAVITY;
         }
     }
 
@@ -156,28 +176,37 @@ public class Player extends Actor
             } catch (IllegalAccessException e) {
                 System.out.println("Cannot access class constructor");
             } 
+
             Greenfoot.setWorld(world);
         }
         if(isTouching(Obstacle.class))
         {
             removeTouching(Obstacle.class);
+            getWorld().removeObject(health[healthCount - 1]);
+            healthCount--;
         }
         if(isTouching(Platform.class) && !isOnGround)
         {
-            yVelocity = 1;
+            yVelocity = -1;
             fall();
         }
     }
 
-    private void mirrorImages() 
+    private void mirrorImages(GreenfootImage[] anim) 
     {
-        for(int i = 0; i < WALK_ANIMATION.length; i++)
+        for(int i = 0; i < anim.length; i++)
         {
-            WALK_ANIMATION[i].mirrorHorizontally();
+            anim[i].mirrorHorizontally();
         }
     }
 
-    private void gameOver() {}
+    private void gameOver() 
+    {
+        if(healthCount == 0)
+        {
+            Greenfoot.setWorld(new Level1());
+        }
+    }
 
     private boolean isOnGround() 
     {

@@ -13,8 +13,8 @@ public class Level2 extends World
     private final float JUMP_FORCE = 5.6f;
     private final int MAX_HEALTH = 3;
     private final int MAX_POWERUP = 3;
-    private final Class NEXT_LEVEL = WinSplash.class;
-    private final GreenfootSound MUSIC = new GreenfootSound("incompetech_tribal.mp3");
+    private final Class NEXT_LEVEL = Level3.class;
+    private final GreenfootSound MUSIC = new GreenfootSound("January.mp3");
     private static final String bgImageFile= "space1.jpg";
     private static final float scrollSpeed = 0.45f;
     private static final int bgWidth = (new GreenfootImage(bgImageFile)).getWidth();
@@ -39,7 +39,7 @@ public class Level2 extends World
     private void prepare()
     {
         setPaintOrder(Player.class, Platform.class, Obstacle.class, Collectable.class,
-        Door.class, HUD.class);
+            Door.class, HUD.class);
         Player player = new Player(SPEED, JUMP_FORCE, GRAVITY, MAX_HEALTH, MAX_POWERUP, NEXT_LEVEL, MUSIC);
         addObject(player,25,755);
         addObject(new Door(),1175,45);
@@ -56,6 +56,12 @@ public class Level2 extends World
         addObject(new Gem(), 50, 150);
         addObject(new Gem(), 50, 550);
         addObject(new Gem(), 1000, 350);
+        Bomb gem4 = new Bomb(GRAVITY);
+        addObject(gem4,799,599);
+        Bomb gem5 = new Bomb(GRAVITY);
+        addObject(gem5,54,351);
+        Bomb gem6 = new Bomb(GRAVITY);
+        addObject(gem6,809,760);
     }
     
     private void spawn()

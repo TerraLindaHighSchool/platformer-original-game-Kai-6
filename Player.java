@@ -11,6 +11,7 @@ public class Player extends Actor
     private Health[] health;
     private Powerup[] powerup;
     private int healthCount;
+    private int powerupCount;
     private int speed;
     private int walkIndex;
     private int standIndex;
@@ -36,7 +37,9 @@ public class Player extends Actor
         NEXT_LEVEL = nextLevel;
         MUSIC = music;
         health = new Health[maxHealth];
+        powerup = new Powerup[maxPowerup];
         healthCount = maxHealth;
+        powerupCount = 0;
         STANDING_IMAGE = getImage();
         WALK_ANIMATION = new GreenfootImage[]
         { 
@@ -51,6 +54,10 @@ public class Player extends Actor
     }
 
     public void act() {
+        if(!MUSIC.isPlaying())
+        {
+            MUSIC.playLoop();
+        }
         walk();
         jump();
         fall();
@@ -123,6 +130,7 @@ public class Player extends Actor
         {
             yVelocity = JUMP_FORCE;
             isJumping = true;
+            Greenfoot.playSound("jump.wav");
         }
         if(isJumping && yVelocity > 0)
         {
@@ -176,19 +184,29 @@ public class Player extends Actor
             } catch (IllegalAccessException e) {
                 System.out.println("Cannot access class constructor");
             } 
-
+            Greenfoot.playSound("door_open.wav");
+            MUSIC.stop();
             Greenfoot.setWorld(world);
         }
         if(isTouching(Obstacle.class))
         {
+            if(!isTouching(TrapDoor.class))
+            {
+                getWorld().removeObject(health[healthCount - 1]);
+                healthCount--;
+            }
+            Greenfoot.playSound("explosionSmall.wav");
             removeTouching(Obstacle.class);
-            getWorld().removeObject(health[healthCount - 1]);
-            healthCount--;
         }
         if(isTouching(Platform.class) && !isOnGround)
         {
             yVelocity = -1;
             fall();
+        }
+        if(isTouching(Gem.class))
+        {
+            removeTouching(Gem.class);
+            Greenfoot.playSound("collectable.wav");
         }
     }
 
@@ -204,7 +222,8 @@ public class Player extends Actor
     {
         if(healthCount == 0)
         {
-            Greenfoot.setWorld(new Level1());
+                MUSIC.stop();
+                Greenfoot.setWorld(new Level1());
         }
     }
 
